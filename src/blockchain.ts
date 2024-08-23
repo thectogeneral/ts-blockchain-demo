@@ -17,6 +17,14 @@ class Blockchain {
         return new Blockchain(startBlock, [startBlock], difficulty)
     }
 
+    addBlock(from: string, to: string, amount: number): void {
+        const blockData: Transaction = {from, to, amount};
+        const lastBlock = this.chain[this.chain.length - 1];
+        const newBlock: Block = new Block(blockData, lastBlock.hash)
+        newBlock.mine(this.difficulty);
+        this.chain.push(newBlock);
+    }
+
 }
 
 export default Blockchain; 
