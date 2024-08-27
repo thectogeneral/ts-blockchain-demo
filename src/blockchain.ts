@@ -37,8 +37,7 @@ class Blockchain {
         return false;
     }
     return true;
-}
-
+    }
 }
 
 export default Blockchain; 

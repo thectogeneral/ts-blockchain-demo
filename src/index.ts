@@ -6,7 +6,7 @@ import Blockchain from "../src/blockchain";
 const usage = `${color.fg.green}
  ____________________________________________________________________________________________________________
 |                                                                                                            |
-|  ${color.blink}Usage:-${color.reset}${color.fg.green}                                                                                                   |
+|  ${color.blink}HOW TO USE:-${color.reset}${color.fg.green}                                                                                                   |
 |  > add sender_name receiver_name transfer_amount  # adds a block to blockchain with the given data         |
 |  > show                                           # shows the list of blocks available in the blockchain   |
 |  > tamper block_number                            # tampers with the block giver by the number             |
@@ -49,24 +49,58 @@ function add(command: string[]) {
 
       }
 
-
     blockchain.addBlock(command[1], command[2], amount)
 }
 
-function show() {
-    console.log(format(blockchain.chain, 10))
+function show(outputLimit: number) {
+    console.log(format(blockchain.chain, outputLimit))
+}
+
+function check() {
+    console.log(
+        blockchain.isValid()
+          ? `${color.fg.yellow}The Blockchain is valid :)`
+          : `${color.fg.red}[CRITICAL] The Blockchain is compromised :(`,
+        color.reset
+      );
+}
+
+function help() {
+    console.log(usage)
+}
+
+function tamper(command: string[], outputLimit: number) {
+    if (command.length !== 2) {
+        console.log(color.fg.red, "WRONG NUMBER OF ARGUMENTS :(", color.reset);
+      }
+    const block_index = parseInt(command[1]);
+    if (block_index < 1 || block_index > outputLimit) {
+        console.log(color.fg.red, "WRONG INDEX FOR BLOCK", color.reset);
+    }
+    const chainLength = blockchain.chain.length;
+    const changeIndex = block_index + (chainLength > outputLimit ? chainLength - outputLimit - 1 : 0);
+    blockchain.chain[changeIndex].timestamp = new Date();
 }
 
 do {
     input = readlineSync.question(`${color.dim}> ${color.reset}`);
     const commands = input.split(" ")
     const command = commands[0]
+    const outputLimit = 10
 
     if(command === "add"){
         add(commands)
-    } else if (command === "show"){
-        show()
-    } else (
+    }else if(command === "help"){
+        help()
+    }else if(command === "tamper"){
+        tamper(commands, outputLimit)
+    }else if (command === "show"){
+        show(outputLimit)
+    }else if (command === "check"){
+        check()
+    }else if (command === "exit"){
+        console.log(color.fg.cyan, "OK, GOODBYE! :(", color.reset);
+    }else (
         console.log("Cannot process command")
     )
 
